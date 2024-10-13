@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Answer Questions</title>
+</head>
+<body>
+    <h1>Unanswered Questions</h1>
+
+    {% if unanswered_questions %}
+        <ul>
+        {% for question in unanswered_questions %}
+            <li>
+                <strong>Asked by {{ question.asked_by }}:</strong> {{ question.question_text }}
+                <form method="POST">
+                    <input type="hidden" name="question_id" value="{{ question._id }}">
+                    <label for="answer_text_{{ question._id }}">Your Answer:</label>
+                    <textarea id="answer_text_{{ question._id }}" name="answer_text" required></textarea>
+                    <button type="submit">Submit Answer</button>
+                </form>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No unanswered questions.</p>
+    {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+
+    <a href="{{ url_for('index') }}">Go Back</a>
+</body>
+</html>

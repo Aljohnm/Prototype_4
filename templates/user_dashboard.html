@@ -1,0 +1,445 @@
+ <!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>User Dashboard</title>
+        <link rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <style>
+                body {
+                    display: flex;
+                    background-color: #f4f5f7;
+                }
+                /* Updated styling for the images to control their size */
+                .visualization-container img {
+                    max-width: 80%; /* Limit the image width to 80% of its container */
+                    height: auto; /* Keep aspect ratio */
+                    border: 1px solid #ccc; /* Optional border */
+                    padding: 10px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional shadow */
+                    margin: 0 auto; /* Center the image */
+                    display: block;
+                }
+
+                /* Ensure the parent container also manages overflow */
+                .visualization-container {
+                    text-align: center; /* Ensure content is centered */
+                    overflow: auto; /* Handle overflow */
+                    padding: 20px;
+                }
+
+
+                /* Sidebar */
+                .sidebar {
+                    width: 250px;
+                    height: 100vh;
+                    background-color: #3a3f51;
+                    color: #fff;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    padding: 20px;
+                    overflow-y: auto;
+                }
+
+                .sidebar h2 {
+                    margin-bottom: 20px;
+                }
+
+                .sidebar ul {
+                    list-style-type: none;
+                }
+
+                .sidebar ul li {
+                    padding: 15px;
+                    margin: 10px 0;
+                    cursor: pointer;
+                    background-color: #3f4558;
+                    border-radius: 5px;
+                }
+
+                .sidebar ul li:hover {
+                    background-color: #50597b;
+                }
+
+                /* Main Content */
+               
+
+                .feature-section {
+                    display: none;
+                }
+
+                /* Carousel */
+                .carousel-item img {
+                    max-width: 100%;
+                    height: 500px;
+                    object-fit: contain;
+                }
+
+                .carousel-caption {
+                    background-color: rgba(0, 0, 0, 0.5);
+                    padding: 15px;
+                    border-radius: 10px;
+                }
+
+                #drop-zone {
+                    position: relative;
+                    width: 100%;
+                    min-height: 150px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: background-color 0.2s ease;
+                }
+
+                #drop-zone.drag-over {
+                    background-color: #cfe2ff; /* Visual feedback when dragging */
+                }
+
+                #drop-zone p {
+                    margin: 0;
+                    color: #6c757d;
+                    font-size: 1.2em;
+                    font-weight: bold;
+                }
+
+                #drop-zone input[type="file"] {
+                    display: none; /* Hidden, triggered by clicking on the zone */
+                }
+
+           /* Updated main content area to ensure centering of all sections */
+.main-content {
+    margin-left: 270px; /* Ensures space for sidebar */
+    padding: 20px;
+    width: calc(100% - 270px); /* Occupies remaining space after sidebar */
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: flex-start; /* Align content to the top */
+    box-sizing: border-box; /* Ensure padding is included in width */
+}
+.malware-container {
+    width: 100%; /* Ensure it takes full width inside the content */
+    max-width: 800px; /* Limit the width for readability */
+    position: relative; /* Enable positioning */
+    right: 300px; /* Move the container 300px from the left */
+    padding: 20px; /* Add some internal padding */
+    background-color: #fff; /* Background for contrast */
+    border-radius: 8px; /* Rounded corners for style */
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+    box-sizing: border-box; /* Include padding in width */
+    text-align: left; /* Align text to the left */
+}
+    </style>
+    </head>
+    <body>
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>User Dashboard</h2>
+            <ul>
+                <li onclick="showSection('uploadDataset')">Upload Dataset</li>
+                <li onclick="showSection('dataVisualization')">Data
+                    Visualization</li>
+                <li onclick="showSection('dataPrediction')">Data Prediction</li>
+                <li onclick="showSection('qaSection')">Q&A Section</li>
+                <li onclick="showSection('malwareInfo')">Malware Information</li>
+                <!-- New Q&A Section -->
+                <li onclick="logout()"
+                    style="background-color: #d9534f;">Logout</li>
+                <!-- Logout Button -->
+
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Upload Dataset Section -->
+<div id="uploadDataset" class="feature-section" style="display: block;">
+    <h3>Upload Dataset</h3>
+    
+    <!-- New Note about required columns -->
+    <p><strong>Note:</strong> The following columns must be present in the dataset:</p>
+    <ul>
+        <li><strong>Category</strong> column (accepted names: category, malware_category, mal_cat, mal_category)</li>
+        <li><strong>Family</strong> column (accepted names: family, malware_family, mal_fam, mal_family)</li>
+    </ul>
+
+    <!-- Existing Upload Section -->
+    <div id="drop-zone" class="border border-primary p-4 text-center" style="border-radius: 10px; background-color: #e9ecef;">
+        <p>Drag & Drop your CSV file here or click to browse</p>
+        <input type="file" id="file" name="file" class="form-control-file d-none" accept=".csv" required>
+    </div>
+    
+    <button type="submit" class="btn btn-primary mt-3" id="uploadBtn">Upload</button>
+    <div id="uploadResult"></div>
+</div>
+
+            <!-- Data Visualization Section -->
+<div id="dataVisualization" class="feature-section">
+    <h3>Data Visualization</h3>
+
+    <!-- New Note about last uploaded dataset -->
+    <p><strong>Note:</strong> This visualization is based on the last dataset you uploaded.</p>
+
+    <!-- Existing Visualization Content -->
+    <div class="visualization-container">
+        <h4>Malware Category Distribution</h4>
+        <img id="visualizationImage1" src alt="Category Visualization" style="display: none;">
+    </div>
+
+    <div class="visualization-container mt-4">
+        <h4>Malware Family Distribution</h4>
+        <img id="visualizationImage2" src alt="Family Visualization" style="display: none;">
+    </div>
+</div>
+
+<!-- Data Prediction Section -->
+<div id="dataPrediction" class="feature-section">
+    <h3>Data Prediction</h3>
+
+    <!-- New Note about last 3 datasets -->
+    <p><strong>Note:</strong> Predictions are based on the last 3 datasets you uploaded.</p>
+
+    <!-- Existing Prediction Content -->
+    <div id="predictionSummary" class="mt-4"></div>
+</div>
+
+
+            <!-- Q&A Section -->
+            <div id="qaSection" class="feature-section">
+                <h3>Ask a Question</h3>
+                <form id="questionForm">
+                    <div class="form-group">
+                        <textarea class="form-control" id="question"
+                            placeholder="Ask your question"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit
+                        Question</button>
+                </form>
+                <h3 class="mt-4">Your Answered Questions</h3>
+                <div id="answeredQuestions"></div>
+            </div>
+        </div>
+         <!-- Malware Information Section -->
+         <div id="malwareInfo" class="feature-section malware-container">
+            <h1>What is Malware?</h1>
+            <p>Malware, short for malicious software, refers to any software intentionally designed to cause damage to a computer, server, client, or computer network. Malware can take various forms and is often created by cybercriminals to steal data, disrupt operations, or gain unauthorized access to systems.</p>
+
+            <h2>Types of Malware</h2>
+            <ul>
+                <li><strong>Viruses:</strong> Programs that attach themselves to legitimate software and spread when the infected software is executed.</li>
+                <li><strong>Worms:</strong> Self-replicating programs that spread across networks and do not need a host program to function.</li>
+                <li><strong>Trojan Horses:</strong> Malware disguised as legitimate software to trick users into running it.</li>
+                <li><strong>Ransomware:</strong> Malware that locks users out of their systems and demands a ransom to restore access.</li>
+                <li><strong>Spyware:</strong> Malware designed to spy on the user’s activity and steal personal information.</li>
+                <li><strong>Adware:</strong> Software that automatically displays or downloads advertising material when a user is online.</li>
+                <li><strong>Rootkits:</strong> Malware that provides attackers with elevated privileges on a system while hiding its presence.</li>
+                <li><strong>Keyloggers:</strong> Programs that record keystrokes to steal passwords or other sensitive information.</li>
+            </ul>
+
+            <h3>Number of Malware Found Till 2023</h3>
+            <div class="stat-box">
+                <p>As of 2023, it is estimated that over <strong>1 billion malware</strong> samples have been identified, with hundreds of thousands of new malware variants emerging daily.</p>
+            </div>
+
+            <h2>Other Useful Information</h2>
+            <ul>
+                <li><strong>How to Protect Yourself:</strong> Keep your software updated, use antivirus and anti-malware programs, avoid clicking on unknown links, and be cautious when downloading files.</li>
+                <li><strong>Impact of Malware:</strong> Malware can result in data breaches, identity theft, financial loss, and disruptions to personal and business operations.</li>
+                <li><strong>Signs of Infection:</strong> Slow computer performance, unexpected pop-up ads, frequent crashes, and unauthorized changes to your files or settings can be signs of malware infection.</li>
+            </ul>
+        </div>
+    </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script
+            src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+        <script>
+            
+            // Function to handle logout
+        function logout() {
+            fetch('/logout', {
+                method: 'POST',
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Redirect to login page or display a confirmation message
+                    window.location.href = '/login';  // Redirect to the login page
+                } else {
+                    alert('Logout failed. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error during logout:', error);
+                alert('An error occurred while logging out.');
+            });
+        }
+
+        // Function to show the selected section and trigger visualization for Data Visualization
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.feature-section');
+            sections.forEach(section => {
+                if (section.id === sectionId) {
+                    section.style.display = 'block'; // Show only the selected section
+                } else {
+                    section.style.display = 'none'; // Hide all other sections
+                }
+            });
+
+            // If Data Visualization is selected, trigger the visualization process
+            if (sectionId === 'dataVisualization') {
+                $.get('/user_data_visualization', function(response) {
+            // Check if visualizations are returned and show them
+            if (response.category_visualization) {
+                $('#visualizationImage1')
+                    .attr('src', 'data:image/png;base64,' + response.category_visualization)
+                    .show();
+            }
+            if (response.family_visualization) {
+                $('#visualizationImage2')
+                    .attr('src', 'data:image/png;base64,' + response.family_visualization)
+                    .show();
+            }
+        }).fail(function(error) {
+            alert('Error: ' + error.responseJSON.error);
+        });
+
+            }
+             // Trigger predictions when Data Prediction is selected
+             if (sectionId === 'dataPrediction') {
+                $.post('/user_prediction', function(response) {
+                    if (response.summary) {
+                        const summary = response.summary;
+                        const summaryHtml = `
+                            <p><strong>Most Common Malware Family:</strong> ${summary.most_common_family}</p>
+                            <p><strong>Least Common Malware Family:</strong> ${summary.least_common_family}</p>
+                            <p><strong>Most Common Malware Category:</strong> ${summary.most_common_category}</p>
+                            <p><strong>Least Common Malware Category:</strong> ${summary.least_common_category}</p>
+                        `;
+                        $('#predictionSummary').html(summaryHtml);
+                    }
+                }).fail(function(error) {
+                    alert('Prediction error: ' + error.responseJSON.error);
+                });
+            }
+        }
+
+
+        $(document).ready(function() {
+            const dropZone = $('#drop-zone');
+            const fileInput = $('#file');
+            const uploadBtn = $('#uploadBtn');
+            const uploadResult = $('#uploadResult');
+
+        // Handle click event to trigger file input (manual selection)
+        dropZone.on('click', function(event) {
+            event.preventDefault(); // Prevent default behavior
+            fileInput.trigger('click');  // Trigger the file input click event
+        });
+
+        // Make sure to handle the file input change event properly
+        fileInput.on('click', function(event) {
+            event.stopPropagation();  // Stop propagation to prevent triggering any parent click events
+        });
+            // Handle file selection through file input (manual selection)
+            fileInput.on('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    dropZone.find('p').text(file.name); // Display selected file name
+                }
+            });
+
+            // Handle form submission for file upload (No visualization functionality)
+            uploadBtn.click(function(event) {
+                event.preventDefault();
+                let formData = new FormData();
+                formData.append('file', fileInput[0].files[0]); // Get the file from input
+
+                $.ajax({
+                    url: '/user_upload_dataset', // Ensure this matches your backend route
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        // Display success message
+                        uploadResult.html('<div class="alert alert-success">Upload Successful!</div>');
+                        
+                        // Change button text to "Upload"
+                        uploadBtn.text('Upload');
+
+                        // Clear the drop-zone text
+                        dropZone.find('p').text('Drag & Drop your CSV file here or click to browse');
+                    },
+                    error: function(error) {
+                        uploadResult.html('<div class="alert alert-danger">Error: ' + error.responseJSON.error + '</div>');
+                    }
+                });
+            });
+        });
+        // Handle visualizations for the user after the dataset has been uploaded
+        $('#visualizationBtn').click(function() {
+            $.get('/user_data_visualization', function(response) {
+                // Check if visualizations are returned and show them
+                if (response.category_visualization) {
+                    $('#visualizationImage1').attr('src', 'data:image/png;base64,' + response.category_visualization).show();
+                }
+                if (response.family_visualization) {
+                    $('#visualizationImage2').attr('src', 'data:image/png;base64,' + response.family_visualization).show();
+                }
+            }).fail(function(error) {
+                alert('Error: ' + error.responseJSON.error);
+            });
+        });
+
+            // Handle predictions
+            $('#predictBtn').click(function() {
+                $.post('/user_prediction', function(response) {
+                    if (response.prediction_report) {
+                        let report = response.prediction_report;
+                        let summaryHtml = `
+                            <p><strong>Total Malicious Instances:</strong> ${report.total_malicious_instances}</p>
+                            <p><strong>Total Benign Instances:</strong> ${report.total_benign_instances}</p>
+                            <p><strong>Accuracy:</strong> ${report.accuracy}%</p>
+                            <p><strong>Precision:</strong> ${report.precision}%</p>
+                            <p><strong>Recall:</strong> ${report.recall}%</p>
+                        `;
+                        $('#predictionSummary').html(summaryHtml);
+                    }
+                }).fail(function(error) {
+                    alert('Prediction error: ' + error.responseJSON.error);
+                });
+            });
+
+            // Submit question
+            $('#questionForm').submit(function(event) {
+                event.preventDefault();
+                var question = $('#question').val();
+
+                $.post('/submit_question', { question: question }, function(response) {
+                    alert(response.message);
+                }).fail(function(error) {
+                    alert('Error: ' + error.responseJSON.error);
+                });
+            });
+
+            // Load answered questions
+            function loadAnsweredQuestions() {
+                $.get('/view_answered_questions', function(response) {
+                    var answeredQuestionsDiv = $('#answeredQuestions');
+                    answeredQuestionsDiv.empty();
+
+                    response.answered_questions.forEach(function (q) {
+                        answeredQuestionsDiv.append('<div><strong>Q: </strong>' + q.question + '<br><strong>A: </strong>' + q.answer + '</div><hr>');
+                    });
+                }).fail(function(error) {
+                    alert('Error loading answered questions: ' + error.responseJSON.error);
+                });
+            }
+
+            // Load answered questions when the page loads
+            loadAnsweredQuestions();
+
+            </script>
+    </body>
+</html>

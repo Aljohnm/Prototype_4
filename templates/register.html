@@ -1,0 +1,76 @@
+
+<!-- register.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f4f5f7;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .container input, .container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #3a3f51;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .container button:hover {
+            background-color: #50597b;
+        }
+        .container .link {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .container .link a {
+            color: #3a3f51;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Register</h2>
+        {% if error %}<p style="color: red; text-align: center;">{{ error }}</p>{% endif %}
+        <form method="POST" action="/register">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <select name="role" required>
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+            </select>
+            <button type="submit">Register</button>
+        </form>
+        <div class="link">
+            <p>Already have an account? <a href="/login">Login here</a></p>
+        </div>
+    </div>
+</body>
+</html>

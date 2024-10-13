@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q&A</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">Q&A Page</h1>
+
+        <!-- For Users -->
+        {% if session.role == 'user' %}
+            <h3>Ask a Question</h3>
+            <form action="{{ url_for('qa_page') }}" method="POST">
+                <div class="form-group">
+                    <label for="question">Your Question:</label>
+                    <textarea class="form-control" id="question" name="question" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Question</button>
+            </form>
+
+            <h3 class="my-4">Your Questions</h3>
+            <ul>
+                {% for question in questions %}
+                    <li>
+                        <strong>Q:</strong> {{ question.question_text }} <br>
+                        {% if question.answer_text %}
+                            <strong>A:</strong> {{ question.answer_text }}
+                        {% else %}
+                            <em>No answer yet</em>
+                        {% endif %}
+                    </li>
+                    <hr>
+                {% endfor %}
+            </ul>
+
+        <!-- For Admins -->
+        {% elif session.role == 'admin' %}
+            <h3>Unanswered Questions</h3>
+            <ul>
+                {% for question in questions %}
+                    <li>
+                        <strong>Q:</strong> {{ question.question_text }} <br>
+                        <form action="{{ url_for('qa_page') }}" method="POST">
+                            <input type="hidden" name="question_id" value="{{ question._id }}">
+                            <textarea class="form-control" name="answer" rows="2" required></textarea>
+                            <button type="submit" class="btn btn-success mt-2">Submit Answer</button>
+                        </form>
+                    </li>
+                    <hr>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+</html>

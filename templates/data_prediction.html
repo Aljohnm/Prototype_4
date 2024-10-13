@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malware Prediction Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f5f7;
+            padding: 20px;
+        }
+
+        h3 {
+            color: #333;
+            text-align: center;
+        }
+
+        .prediction-container {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .prediction-container h4 {
+            margin-bottom: 15px;
+            color: #3a3f51;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            padding: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        img {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .no-prediction {
+            text-align: center;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h3>Malware Prediction Results</h3>
+
+    <div class="prediction-container">
+        <h4>Prediction Summary:</h4>
+        {% if summary %}
+        <ul>
+            <li>Most Common Malware Family: {{ summary.most_common_family }}</li>
+            <li>Least Common Malware Family: {{ summary.least_common_family }}</li>
+            <li>Most Common Malware Category: {{ summary.most_common_category }}</li>
+            <li>Least Common Malware Category: {{ summary.least_common_category }}</li>
+        </ul>
+        {% else %}
+        <p class="no-prediction">No predictions available. Please upload a dataset and make a prediction.</p>
+        {% endif %}
+
+        <h4>Malware Family Distribution:</h4>
+        {% if encoded_family_image %}
+        <img src="data:image/png;base64,{{ encoded_family_image }}" alt="Malware Family Distribution">
+        {% endif %}
+
+        <h4>Malware Category Distribution:</h4>
+        {% if encoded_category_image %}
+        <img src="data:image/png;base64,{{ encoded_category_image }}" alt="Malware Category Distribution">
+        {% endif %}
+    </div>
+</body>
+</html>
